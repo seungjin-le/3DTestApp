@@ -20,9 +20,7 @@ export default function LottoMachine() {
       <directionalLight position={[10, 10, 5]} intensity={1} castShadow />
       <OrbitControls />
 
-      {/* 물리 엔진 설정 */}
       <Physics gravity={[0, -9.81, 0]}>
-        {/* 여기에 로또 통과 공들을 추가합니다. */}
         <LottoContainer />
         <LottoBalls count={45} />
       </Physics>
