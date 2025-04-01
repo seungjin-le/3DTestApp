@@ -6,24 +6,21 @@ import { Physics } from '@react-three/rapier'
 import React from 'react'
 import LottoContainer from '@/app/components/LottoContainer'
 import LottoBalls from '@/app/components/LottoBall'
-// import { BallMixer } from './BallMixer';
 
-// import { Physics } from '@react-three/cannon'; // Cannon.js 사용 시
-
-export default function LottoMachine() {
+export default function LottoMachine({ drawing, count = 0 }) {
   return (
     <Canvas
-      style={{ height: '100vh', background: '#f0f0f0' }}
+      style={{ height: '100vh', background: '#ddd' }}
       camera={{ position: [0, 5, 15], fov: 50 }}
     >
       <ambientLight intensity={0.5} />
       <directionalLight position={[10, 10, 5]} intensity={1} castShadow />
-      <OrbitControls />
 
       <Physics gravity={[0, -9.81, 0]}>
         <LottoContainer />
-        <LottoBalls count={45} />
+        <LottoBalls count={count} drawing={drawing} />
       </Physics>
+      <OrbitControls />
     </Canvas>
   )
 }

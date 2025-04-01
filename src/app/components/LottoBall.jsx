@@ -1,15 +1,13 @@
 'use client'
 
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useEffect, useCallback, useState } from 'react'
 import { RigidBody, BallCollider } from '@react-three/rapier'
 import { Sphere } from '@react-three/drei'
 import * as THREE from 'three'
 import html2canvas from 'html2canvas'
 
-function LottoBall({ position, number }) {
+function LottoBall({ position, number, drawing = false }) {
   const [texture, setTexture] = useState(null)
-
-  const loader = new THREE.TextureLoader()
 
   const [isLoading, setIsLoading] = useState(true)
 
@@ -18,7 +16,7 @@ function LottoBall({ position, number }) {
 
     newDiv.style.backgroundColor = 'black'
     newDiv.textContent = number
-    newDiv.style.fontSize = '100px'
+    newDiv.style.fontSize = '40px'
     newDiv.style.fontWeight = 'bold'
     newDiv.style.color = 'white'
     newDiv.style.display = 'flex'
@@ -38,7 +36,11 @@ function LottoBall({ position, number }) {
     })
 
     return () => texture && texture.dispose()
-  }, [])
+  }, [drawing])
+
+  const positions = useCallback(() => {
+    return drawing ? [0, 0, 0] : position
+  }, [drawing, position])
 
   return (
     <>
@@ -47,7 +49,8 @@ function LottoBall({ position, number }) {
       ) : (
         <RigidBody
           colliders={false}
-          position={position}
+          // position={position}
+          position={positions()}
           restitution={0.7}
           friction={0.5}
           linearDamping={0.5}
@@ -64,7 +67,7 @@ function LottoBall({ position, number }) {
 }
 
 // LottoMachine 컴포넌트 내부에 공 생성 로직 추가
-export default function LottoBalls({ count }) {
+export default function LottoBalls({ count, drawing }) {
   const [balls, setBalls] = useState([])
 
   useEffect(() => {
@@ -79,10 +82,11 @@ export default function LottoBalls({ count }) {
             (Math.random() - 0.5) * 4 // 통 내부 범위 내 무작위 Z
           ]}
           number={i}
+          drawing={drawing === i}
         />
       )
     }
     setBalls(() => newBalls)
-  }, [count])
+  }, [count, drawing])
   return <>{balls}</>
 }

@@ -5,7 +5,7 @@ import { CuboidCollider, RigidBody } from '@react-three/rapier'
 import React from 'react'
 
 export default function LottoContainer() {
-  const wallThickness = 0.2
+  const wallThickness = 0.5
   const height = 5
   const radius = 5
 
