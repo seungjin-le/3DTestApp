@@ -3,11 +3,10 @@
 import React, { useEffect, useCallback, useState, useMemo, memo } from 'react'
 import { RigidBody, BallCollider } from '@react-three/rapier'
 import { Sphere } from '@react-three/drei'
-import * as THREE from 'three'
-import html2canvas from 'html2canvas'
 import { useSpring, animated } from '@react-spring/three'
+import * as THREE from 'three'
 
-const LottoBall = memo(({ position, number, drawing = false, onClick }) => {
+const LottoBall = memo(({ number, drawing = false, onClick }) => {
   const texture = useMemo(() => {
     const canvas = document.createElement('canvas')
     canvas.width = 200
@@ -30,36 +29,34 @@ const LottoBall = memo(({ position, number, drawing = false, onClick }) => {
     return new THREE.CanvasTexture(canvas)
   }, [number])
 
-  // 공이 정면을 바라보도록 방향 설정
-  const ballRotation = useMemo(() => (drawing ? [0, -1.5, 0] : [0, -1.5, 0]), [drawing])
-
-  // 공이 3초 동안 천천히 이동하는 애니메이션 설정
-  const test = useSpring(
-    {
-      position: drawing
-        ? [0, 5, 0]
-        : [(Math.random() - 0.5) * 4, Math.random() * 3 + 2, (Math.random() - 0.5) * 4],
-      color: drawing ? '#ffd700' : '#ffffff', // 금색과 흰색
-      config: {
-        mass: 5, // 무거운 질량 (느린 시작)
-        tension: 170, // 스프링 텐션
-        friction: 50, // 마찰 (늦게 도착)
-        duration: 3000 // 3초 동안 애니메이션
-      }
-    },
-    [drawing]
+  const randomPos = useCallback(
+    () => [(Math.random() - 0.5) * 5, Math.random() * 3 + 4, (Math.random() - 0.5) * 5],
+    []
   )
+  const animatedPosition = useMemo(() => (drawing ? [0, 5, 0] : randomPos()), [drawing, randomPos])
 
-  const animatedPosition = useMemo(
-    () =>
-      drawing
-        ? [0, 5, 0]
-        : [(Math.random() - 0.5) * 5, Math.random() * 3 + 4, (Math.random() - 0.5) * 5],
-    [drawing]
-  )
-  console.log(test?.[0]?.color)
+  const [spring, api] = useSpring(() => ({
+    position: animatedPosition,
+    config: { duration: 1000 }
+  }))
+  useEffect(() => {
+    if (drawing) {
+      api.start({
+        to: {
+          position: [0, 5, 0],
+          opacity: 1
+        },
+        from: {
+          position: [0, 0, 0],
+          opacity: 0
+        },
+        config: { duration: 500 }
+      })
+    }
+  }, [drawing])
+
   return (
-    <animated.group position={animatedPosition}>
+    <animated.group position={spring.position}>
       <RigidBody
         onClick={() => drawing && onClick(number)}
         key={drawing ? `fixed-${number}` : `dynamic-${number}`}
@@ -68,7 +65,7 @@ const LottoBall = memo(({ position, number, drawing = false, onClick }) => {
         linearDamping={0.5}
         angularDamping={0.5}
         type={drawing ? 'fixed' : 'dynamic'}
-        rotation={ballRotation}
+        rotation={[0, -1.5, 0]}
       >
         <BallCollider args={[0.5]} />
         <Sphere args={[0.5, 32, 32]} castShadow>
@@ -86,10 +83,7 @@ export default function LottoBalls({ count, drawing }) {
   const actualCount = drawing ? count : Math.min(count, visibleCount)
 
   const balls = useMemo(() => {
-    return Array.from({ length: count }, (_, i) => ({
-      id: i + 1,
-      position: [(Math.random() - 0.5) * 4, Math.random() * 3 + 2, (Math.random() - 0.5) * 4]
-    }))
+    return Array.from({ length: count }, (_, i) => i + 1)
   }, [count])
 
   useEffect(() => {
@@ -99,12 +93,10 @@ export default function LottoBalls({ count, drawing }) {
       const timer = setInterval(() => {
         setVisibleCount((prev) => {
           const next = prev + 1
-          if (next >= count) {
-            clearInterval(timer)
-          }
+          if (next >= count) clearInterval(timer)
           return next
         })
-      }, 300)
+      }, 200)
 
       return () => clearInterval(timer)
     }
@@ -114,10 +106,9 @@ export default function LottoBalls({ count, drawing }) {
     <>
       {balls.slice(0, actualCount).map((ball) => (
         <LottoBall
-          key={ball.id}
-          position={ball.position}
-          number={ball.id}
-          drawing={ball.id === drawing}
+          key={ball}
+          number={ball}
+          drawing={ball === drawing}
           onClick={(id) => console.log(`Clicked ball: ${id}`)}
         />
       ))}

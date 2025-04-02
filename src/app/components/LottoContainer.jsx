@@ -28,7 +28,7 @@ export default function LottoContainer() {
       })}
 
       <Cylinder args={[radius, radius, height, 32]} position={[0, 0, 0]}>
-        <meshStandardMaterial color="lightblue" transparent opacity={0.3} />
+        <meshStandardMaterial color="lightblue" transparent opacity={0.9} />
       </Cylinder>
     </RigidBody>
   )
