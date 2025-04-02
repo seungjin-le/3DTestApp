@@ -11,7 +11,7 @@ export default function LottoMachine({ drawing, count = 0 }) {
   return (
     <Canvas
       style={{ height: '100vh', background: '#ddd' }}
-      camera={{ position: [0, 5, 15], fov: 50 }}
+      camera={{ position: [0, 5, 15], fov: 80 }}
     >
       <ambientLight intensity={0.5} />
       <directionalLight position={[10, 10, 5]} intensity={1} castShadow />
