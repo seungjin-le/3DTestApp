@@ -6,7 +6,7 @@ import { Sphere } from '@react-three/drei'
 import { useSpring, animated } from '@react-spring/three'
 import * as THREE from 'three'
 
-const LottoBall = memo(({ number, drawing = false, onClick }) => {
+const LottoBall = memo(({ number, drawing = false, onClick, deleteBall }) => {
   const texture = useMemo(() => {
     const canvas = document.createElement('canvas')
     canvas.width = 200
@@ -55,9 +55,14 @@ const LottoBall = memo(({ number, drawing = false, onClick }) => {
     }
   }, [drawing])
 
+  useEffect(() => {
+    console.log(deleteBall)
+  }, [deleteBall])
+
   return (
     <animated.group position={spring.position}>
       <RigidBody
+        className={deleteBall ? 'hidden opacity-0' : ''}
         onClick={() => drawing && onClick(number)}
         key={drawing ? `fixed-${number}` : `dynamic-${number}`}
         restitution={0.4}
@@ -79,27 +84,14 @@ const LottoBall = memo(({ number, drawing = false, onClick }) => {
 // LottoMachine 컴포넌트 내부에 공 생성 로직 추가
 export default function LottoBalls({ count, drawing }) {
   const [visibleCount, setVisibleCount] = useState(0)
-
+  const [drawings, setDrawings] = useState([])
   const actualCount = drawing ? count : Math.min(count, visibleCount)
 
-  const balls = useMemo(() => {
-    return Array.from({ length: count }, (_, i) => i + 1)
-  }, [count])
+  const balls = useMemo(() => Array.from({ length: count }, (_, i) => i + 1), [count])
 
   useEffect(() => {
-    if (count > 0 && !drawing) {
-      setVisibleCount(0)
-
-      const timer = setInterval(() => {
-        setVisibleCount((prev) => {
-          const next = prev + 1
-          if (next >= count) clearInterval(timer)
-          return next
-        })
-      }, 200)
-
-      return () => clearInterval(timer)
-    }
+    setVisibleCount(count)
+    setDrawings((item) => [...item, drawing])
   }, [count, drawing])
 
   return (
@@ -108,6 +100,7 @@ export default function LottoBalls({ count, drawing }) {
         <LottoBall
           key={ball}
           number={ball}
+          deleteBall={drawings.includes(ball) && drawings !== drawings[drawings.length - 1]}
           drawing={ball === drawing}
           onClick={(id) => console.log(`Clicked ball: ${id}`)}
         />
