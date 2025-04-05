@@ -1,6 +1,3 @@
-import '@testing-library/jest-dom'
-
-// Three.js 및 HTML5 Canvas API 모킹
 global.HTMLCanvasElement.prototype.getContext = () => ({
   fillStyle: '',
   beginPath: jest.fn(),

@@ -1,8 +1,9 @@
 import React from 'react'
 import { render } from '@testing-library/react'
-import BallMixer from '../BallMixer'
+import BallMixer from '@/components/BallMixer'
 
-// @react-three/fiber 및 @react-three/rapier 모킹
+import { describe, expect, it, jest } from '@jest/globals'
+
 jest.mock('@react-three/fiber', () => ({
   useFrame: jest.fn((callback) => callback({}, 0.1))
 }))

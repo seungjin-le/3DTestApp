@@ -1,6 +1,6 @@
 import React from 'react'
 import { render } from '@testing-library/react'
-import LottoMachine from '../LottoMachine'
+import LottoMachine from 'components/LottoMachine'
 
 // Three.js 관련 라이브러리 모킹
 jest.mock('@react-three/drei', () => ({

@@ -3,9 +3,9 @@
 import { OrbitControls } from '@react-three/drei'
 import { Canvas } from '@react-three/fiber'
 import { Physics } from '@react-three/rapier'
+import LottoBalls from 'components/LottoBall'
+import LottoContainer from 'components/LottoContainer'
 import React from 'react'
-import LottoContainer from '@/app/components/LottoContainer'
-import LottoBalls from '@/app/components/LottoBall'
 
 export default function LottoMachine({ drawing, count = 0 }) {
   return (

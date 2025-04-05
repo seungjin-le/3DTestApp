@@ -1,7 +1,7 @@
 'use client'
 
+import LottoMachine from 'components/LottoMachine'
 import { useState } from 'react'
-import LottoMachine from '@/app/components/LottoMachine'
 
 export default function Home() {
   const [drawingActive, setDrawingActive] = useState<number | null>(null)

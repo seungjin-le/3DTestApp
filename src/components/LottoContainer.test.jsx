@@ -1,6 +1,6 @@
 import React from 'react'
 import { render } from '@testing-library/react'
-import LottoContainer from '../LottoContainer'
+import { describe, expect, it, jest } from '@jest/globals'
 
 // Three.js 관련 라이브러리 모킹
 jest.mock('@react-three/drei', () => ({
